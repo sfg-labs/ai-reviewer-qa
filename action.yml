@@ -1,0 +1,64 @@
+name: 'AI Reviewer — QA'
+description: 'AI-driven PR review for QA concerns: test coverage delta, OpenAPI contract breaks, bundle-size regression, N+1 queries, perf smells, missing indexes.'
+author: 'sfg-labs'
+branding:
+  icon: 'check-circle'
+  color: 'green'
+
+inputs:
+  anthropic-api-key:
+    description: 'Anthropic API key (set via GitHub secret ANTHROPIC_API_KEY)'
+    required: true
+  github-token:
+    description: 'GitHub token (use ${{ secrets.GITHUB_TOKEN }})'
+    required: true
+  config-path:
+    description: 'Path to ai-review.yml config in the target repo'
+    required: false
+    default: '.github/ai-review.yml'
+  model:
+    description: 'Claude model — defaults to claude-sonnet-4-6; escalates to claude-opus-4-7 for ambiguous chunks'
+    required: false
+    default: 'claude-sonnet-4-6'
+  max-tokens:
+    description: 'Max input tokens per PR (polite skip if exceeded)'
+    required: false
+    default: '50000'
+  rule-pack-version:
+    description: 'Rule pack version pin (for reproducibility — defaults to packaged version)'
+    required: false
+    default: ''
+  database-url:
+    description: 'Optional Postgres DATABASE_URL — if provided, runs EXPLAIN against the live schema for queries touched by the PR'
+    required: false
+    default: ''
+  coverage-base-ref:
+    description: 'Base ref (branch or SHA) to compare jest coverage against. Defaults to PR base branch.'
+    required: false
+    default: ''
+  bundle-budget-kb:
+    description: 'Max allowed bundle-size delta (KB) before flagging PERF.BUNDLE.001'
+    required: false
+    default: '50'
+  fail-on-coverage-drop:
+    description: 'Submit REQUEST_CHANGES when line coverage on changed files drops vs base'
+    required: false
+    default: 'true'
+  fail-on-breaking-api:
+    description: 'Submit REQUEST_CHANGES when openapi-diff detects a breaking change without `breaking-change` label'
+    required: false
+    default: 'true'
+
+outputs:
+  verdict:
+    description: 'Final review verdict: APPROVE | COMMENT | REQUEST_CHANGES | SKIPPED'
+  findings-count:
+    description: 'Total findings posted on this PR'
+  rule-pack-version:
+    description: 'Rule pack version used for this review'
+  coverage-delta:
+    description: 'Line-coverage delta (percentage points) for changed files vs base'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

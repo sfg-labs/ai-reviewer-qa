@@ -1,0 +1,11 @@
+# Default — entire repo
+*                  @18-ashish-sharma
+
+# Protected paths — code-owner review REQUIRED to change
+/.github/          @18-ashish-sharma
+/.claude/          @18-ashish-sharma
+/CODEOWNERS        @18-ashish-sharma
+/LICENSE           @18-ashish-sharma
+/action.yml        @18-ashish-sharma
+/dist/             @18-ashish-sharma
+/src/rule-packs/   @18-ashish-sharma

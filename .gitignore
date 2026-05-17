@@ -1,11 +1,12 @@
 # Build + runtime
 node_modules/
-dist/
 build/
 .next/
 out/
 coverage/
 *.log
+
+# NOTE: dist/ IS committed — it's how GitHub Actions consume Node actions.
 
 # Env
 .env

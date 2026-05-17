@@ -1,0 +1,44 @@
+{
+  "name": "ai-reviewer-qa",
+  "version": "1.0.0",
+  "description": "GitHub Action: AI PR reviewer for QA concerns (perf, N+1, coverage delta, OpenAPI contract breaks, bundle-size regression)",
+  "private": true,
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "ncc build src/runner.ts -o dist --minify --source-map --license licenses.txt",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "lint": "tsc --noEmit",
+    "prepare-action": "npm run build"
+  },
+  "keywords": [
+    "github-action",
+    "ai-review",
+    "qa",
+    "coverage",
+    "performance",
+    "openapi",
+    "anthropic",
+    "claude"
+  ],
+  "author": "sfg-labs",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/github": "^6.0.0",
+    "@anthropic-ai/sdk": "^0.96.0",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.13",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.16.10",
+    "@vercel/ncc": "^0.38.2",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.6.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
