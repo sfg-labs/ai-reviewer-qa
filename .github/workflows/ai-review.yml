@@ -3,6 +3,16 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
+# Permissions GITHUB_TOKEN gets — needed so the 3 reviewer actions can
+# read PR diffs + post inline comments + summary reviews.
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  checks: write
+
+# All 3 reviewers are deterministic — no LLM API key needed, $0/month.
+# continue-on-error: true keeps the merge non-blocking while rules stabilize.
 jobs:
   security:
     if: github.event.pull_request.draft == false
@@ -10,11 +20,12 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
-      - uses: sfg-labs/ai-reviewer-security@main
         with:
-          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
-          github-token:      ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      - name: AI security review
+        uses: sfg-labs/ai-reviewer-security@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   quality:
     if: github.event.pull_request.draft == false
@@ -22,8 +33,22 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
-      - uses: sfg-labs/ai-reviewer-quality@main
         with:
-          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
-          github-token:      ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      - name: AI quality review
+        uses: sfg-labs/ai-reviewer-quality@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  qa:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: AI QA review
+        uses: sfg-labs/ai-reviewer-qa@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
