@@ -3,7 +3,6 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 import * as fs from 'fs';
 import * as path from 'path';
-import Anthropic from '@anthropic-ai/sdk';
 
 import { fetchPrContext, estimateTokens } from './github/pr-diff';
 import { postInline } from './github/post-inline';
@@ -11,20 +10,16 @@ import { postSummary } from './github/post-summary';
 import { aggregate } from './aggregator';
 import { loadConfig } from './config';
 import { applySuppressions } from './suppression';
-import { runReasoner } from './claude/reasoner';
 import { runStaticHeuristics } from './tools/static-heuristics';
 import { parseIstanbulSummary, diffCoverage } from './tools/jest-coverage';
 import { diffOpenApi, openApiFindings } from './tools/openapi-diff';
 import { parseBundleReport, diffBundle, isFePr } from './tools/bundle-size';
 import { findOpenApiSpec, loadOpenApi, detectNewRouteFiles } from './tools/openapi-loader';
-import { SYSTEM_PROMPT } from './prompts/system';
 import { RULE_PACK_VERSION } from './version';
 import { Finding } from './types';
 
 async function main(): Promise<void> {
-  const anthropicKey = core.getInput('anthropic-api-key', { required: true });
   const githubToken = core.getInput('github-token', { required: true });
-  const model = core.getInput('model') || 'claude-sonnet-4-6';
   const maxTokens = parseInt(core.getInput('max-tokens') || '50000', 10);
   const configPath = core.getInput('config-path') || '.github/ai-review.yml';
   const bundleBudgetKb = parseInt(core.getInput('bundle-budget-kb') || '50', 10);
@@ -95,20 +90,6 @@ async function main(): Promise<void> {
       const head = parseBundleReport(JSON.parse(fs.readFileSync(headBundlePath, 'utf8')));
       findings.push(...diffBundle(base, head, config.bundle_budget_kb));
     }
-  }
-
-  // Claude reasoner for anything subtler
-  try {
-    const client = new Anthropic({ apiKey: anthropicKey });
-    const claudeFindings = await runReasoner(pr.files, {
-      client,
-      model,
-      systemPrompt: SYSTEM_PROMPT,
-      maxTokens,
-    });
-    findings.push(...claudeFindings);
-  } catch (err) {
-    core.warning(`Claude reasoner failed: ${String(err)}`);
   }
 
   // Suppression directives

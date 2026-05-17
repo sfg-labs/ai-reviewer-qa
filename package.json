@@ -17,16 +17,13 @@
     "qa",
     "coverage",
     "performance",
-    "openapi",
-    "anthropic",
-    "claude"
+    "openapi"
   ],
   "author": "sfg-labs",
   "license": "UNLICENSED",
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.0",
-    "@anthropic-ai/sdk": "^0.96.0",
     "js-yaml": "^4.1.0"
   },
   "devDependencies": {

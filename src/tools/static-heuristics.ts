@@ -2,8 +2,8 @@ import { Finding, PrFile } from '../types';
 import { RULE_PACK_VERSION, citationUrl } from '../version';
 
 /**
- * Cheap pre-Claude regex pass over the diff. Each rule is intentionally
- * conservative; ambiguity goes to the Claude reasoner.
+ * Deterministic regex pass over the diff. Each rule is intentionally
+ * conservative — only flag obvious matches.
  *
  * Rules covered here:
  *  - PERF.NPLUS1.001 — Prisma `include:` paired with loop iteration markers

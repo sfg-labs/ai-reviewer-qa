@@ -1,13 +1,9 @@
 # Install — ai-reviewer-qa
 
-Three steps to wire this reviewer into any `sfg-labs` repo.
+Two steps to wire this reviewer into any `sfg-labs` repo. Runs purely on
+deterministic static analyzers — no API keys required, $0 runtime cost.
 
-## 1. Add the secret
-
-Set an org-level secret `ANTHROPIC_API_KEY` (Anthropic console → API keys).
-GitHub Settings → Secrets and variables → Actions → New repository secret.
-
-## 2. Add the workflow
+## 1. Add the workflow
 
 `.github/workflows/ai-review.yml`:
 
@@ -57,14 +53,12 @@ jobs:
 
       - uses: sfg-labs/ai-reviewer-qa@main
         with:
-          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
           github-token:      ${{ secrets.GITHUB_TOKEN }}
-          model:             claude-sonnet-4-6
           max-tokens:        50000
           bundle-budget-kb:  50
 ```
 
-## 3. (Optional) Customize per-repo
+## 2. (Optional) Customize per-repo
 
 Add `.github/ai-review.yml`:
 
@@ -85,10 +79,8 @@ qa:
 
 | Input | Required | Default | Description |
 |---|---|---|---|
-| `anthropic-api-key` | yes | — | Anthropic API key (use a GH secret) |
 | `github-token` | yes | — | `${{ secrets.GITHUB_TOKEN }}` |
 | `config-path` | no | `.github/ai-review.yml` | Per-repo config path |
-| `model` | no | `claude-sonnet-4-6` | Claude model |
 | `max-tokens` | no | `50000` | Token budget — over → SKIPPED |
 | `bundle-budget-kb` | no | `50` | Bundle-asset growth allowed |
 | `database-url` | no | _empty_ | Optional Postgres URL for `EXPLAIN` |
@@ -108,8 +100,8 @@ qa:
 ## Token budget
 
 If the PR diff exceeds the configured budget (default 50K input tokens), the
-action posts a SKIPPED outcome and does not invoke Claude — no GitHub
-comments are created. This keeps cost predictable.
+action posts a SKIPPED outcome and no GitHub comments are created. This keeps
+analyzer runtime predictable on huge PRs.
 
 ## Troubleshooting
 
