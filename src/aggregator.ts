@@ -60,7 +60,7 @@ export function aggregate(
       (config.fail_on_breaking_api && hasBreakingApi)) {
     verdict = 'REQUEST_CHANGES';
   } else if (deduped.length === 0) {
-    verdict = 'APPROVE';
+    verdict = 'COMMENT';
   } else {
     verdict = 'COMMENT';
   }
