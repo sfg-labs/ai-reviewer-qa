@@ -7,7 +7,7 @@ branding:
 
 inputs:
   github-token:
-    description: 'GitHub token (use ${{ secrets.GITHUB_TOKEN }})'
+    description: 'GitHub token . Pass secrets.GITHUB_TOKEN from your workflow.'
     required: true
   config-path:
     description: 'Path to ai-review.yml config in the target repo'
