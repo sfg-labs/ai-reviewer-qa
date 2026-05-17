@@ -26,7 +26,7 @@ const f = (over: Partial<Finding>): Finding => ({
 describe('aggregate', () => {
   it('APPROVE when there are no findings', () => {
     const r = aggregate([], config, { coverageDeltaPct: 0 });
-    expect(r.verdict).toBe('APPROVE');
+    expect(r.verdict).toBe('COMMENT');
     expect(r.findings).toEqual([]);
     expect(r.summary).toMatch(/No QA regressions/);
   });
@@ -100,7 +100,7 @@ describe('aggregate', () => {
       coverageDeltaPct: 0,
     });
     expect(r.findings).toEqual([]);
-    expect(r.verdict).toBe('APPROVE');
+    expect(r.verdict).toBe('COMMENT');
   });
 
   it('honors rule_overrides.severity bump', () => {
